@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>나에게 딱 맞는 영어책 찾기 — 북샘</title>
+<style>
+  /* ---- Pretendard (그레이스풀 폴백: 시스템 한글 폰트) ---- */
+  @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+  :root{
+    --paper:#EEF2FB;
+    --card:#FFFFFF;
+    --ink:#172139;
+    --muted:#6B7793;
+    --line:#E4E9F3;
+    --blue:#2E55C9;
+    --blue-deep:#1E3DA0;
+    --blue-soft:#EAF0FF;
+    --mint:#12B5A4;
+    --gold:#FFB020;
+    --coral:#FF6B5C;
+    --r-card:22px;
+    --r-btn:14px;
+    --shadow:0 18px 40px -22px rgba(23,33,57,.45);
+    --shadow-sm:0 6px 16px -10px rgba(23,33,57,.5);
+    --font:"Pretendard","Pretendard Variable",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic","맑은 고딕",system-ui,sans-serif;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--font);
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 1px 1px, rgba(46,85,201,.10) 1px, transparent 0) 0 0/22px 22px,
+      linear-gradient(180deg,#F3F6FD 0%,#E7ECFA 100%);
+    background-attachment:fixed;
+    min-height:100dvh;
+    -webkit-font-smoothing:antialiased;
+    line-height:1.5;
+  }
+
+  .wrap{
+    max-width:560px;
+    margin:0 auto;
+    padding:28px 18px 64px;
+  }
+
+  /* ---------- header / mascot ---------- */
+  .topbar{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .mascot{flex:0 0 auto;}
+  .mascot svg{display:block;animation:bob 3.4s ease-in-out infinite;transform-origin:50% 80%;}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-1.5deg);}50%{transform:translateY(-5px) rotate(1.5deg);}}
+  .brand h1{font-size:18px;font-weight:800;margin:0;letter-spacing:-.02em;}
+  .brand p{font-size:12.5px;color:var(--muted);margin:2px 0 0;font-weight:600;}
+  .brand b{color:var(--blue);}
+
+  /* ---------- progress: bookmark tabs ---------- */
+  .tabs{display:flex;gap:7px;margin:0 2px 20px;}
+  .tab{
+    flex:1;height:9px;border-radius:999px;background:#D7DEEE;position:relative;overflow:hidden;
+    transition:background .35s;
+  }
+  .tab.done{background:linear-gradient(90deg,var(--blue),#5B7BE6);}
+  .tab.current{background:#BAC6E6;}
+  .tab.current::after{
+    content:"";position:absolute;inset:0;width:55%;
+    background:linear-gradient(90deg,var(--blue),#5B7BE6);border-radius:999px;
+  }
+
+  /* ---------- card / question ---------- */
+  .card{
+    background:var(--card);border-radius:var(--r-card);box-shadow:var(--shadow);
+    padding:26px 22px 24px;position:relative;
+  }
+  .step-card{animation:rise .42s cubic-bezier(.16,.8,.3,1) both;}
+  @keyframes rise{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+
+  .eyebrow{font-size:12px;font-weight:800;color:var(--blue);letter-spacing:.04em;text-transform:uppercase;}
+  .q{font-size:22px;font-weight:800;line-height:1.32;margin:8px 0 4px;letter-spacing:-.02em;}
+  .q .sub{display:block;font-size:13.5px;font-weight:600;color:var(--muted);margin-top:7px;letter-spacing:0;}
+
+  .options{display:grid;gap:10px;margin-top:18px;}
+  .opt{
+    display:flex;align-items:center;gap:13px;width:100%;text-align:left;
+    background:#FBFCFF;border:1.5px solid var(--line);border-radius:var(--r-btn);
+    padding:14px 15px;font-family:inherit;font-size:15.5px;font-weight:700;color:var(--ink);
+    cursor:pointer;transition:transform .12s,border-color .15s,background .15s,box-shadow .15s;
+  }
+  .opt .emo{font-size:22px;line-height:1;flex:0 0 auto;}
+  .opt .txt{flex:1;}
+  .opt .txt small{display:block;font-size:12.5px;font-weight:600;color:var(--muted);margin-top:2px;}
+  .opt:hover{border-color:var(--blue);background:var(--blue-soft);transform:translateY(-1px);}
+  .opt:active{transform:translateY(0) scale(.99);}
+  .opt:focus-visible{outline:3px solid #B9CBFF;outline-offset:2px;}
+
+  .grades{grid-template-columns:repeat(2,1fr);}
+  .grades .opt{justify-content:center;text-align:center;font-size:16px;padding:16px 8px;}
+
+  .backrow{margin-top:16px;}
+  .back{
+    background:none;border:none;color:var(--muted);font-family:inherit;font-weight:700;font-size:13.5px;
+    cursor:pointer;padding:6px 4px;display:inline-flex;align-items:center;gap:5px;
+  }
+  .back:hover{color:var(--ink);}
+
+  /* ---------- result ---------- */
+  .result{animation:rise .5s cubic-bezier(.16,.8,.3,1) both;}
+  .persona{
+    display:flex;flex-direction:column;align-items:center;text-align:center;
+    background:linear-gradient(160deg,#EAF0FF,#F3F0FF);
+    border:1.5px solid #D6DFFF;border-radius:18px;
+    padding:22px 18px 18px;margin-bottom:18px;
+  }
+  .persona .p-emo{font-size:54px;line-height:1;margin-bottom:10px;
+    filter:drop-shadow(0 4px 8px rgba(46,85,201,.18));}
+  .persona .p-name{font-size:28px;font-weight:900;color:var(--blue-deep);
+    letter-spacing:-.03em;line-height:1.2;}
+  .persona .p-tag{font-size:12px;font-weight:800;color:#7B8FBF;
+    background:#fff;border-radius:999px;padding:4px 11px;margin-top:8px;letter-spacing:.02em;}
+  .result h2{font-size:14px;color:var(--muted);font-weight:700;margin:0 0 4px;letter-spacing:-.01em;}
+  .book{
+    position:relative;background:linear-gradient(155deg,#F7F9FF,#EEF2FE);
+    border:1.5px solid var(--line);border-radius:18px;padding:22px 20px 20px;margin-top:6px;overflow:hidden;
+  }
+  /* coral ribbon corner */
+  .book::before{
+    content:"운명의 한 권";position:absolute;top:15px;right:-34px;transform:rotate(38deg);
+    background:var(--coral);color:#fff;font-size:11px;font-weight:800;letter-spacing:.02em;
+    padding:5px 38px;box-shadow:var(--shadow-sm);
+  }
+  .book .title{font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.2;padding-right:34px;}
+  .book .why{font-size:14px;color:#3B4663;margin-top:12px;font-weight:600;line-height:1.6;}
+  .verified{
+    display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;color:var(--mint);
+    background:#E7F8F5;padding:4px 9px;border-radius:999px;margin-top:12px;
+  }
+
+  .hook{
+    display:flex;gap:10px;background:#FFF8E9;border:1px solid #FBE6B8;border-radius:14px;
+    padding:13px 14px;margin-top:14px;font-size:13.5px;font-weight:600;color:#7A5A12;line-height:1.55;
+  }
+  .hook .pin{font-size:18px;flex:0 0 auto;}
+
+  .note{
+    background:#F0F3FA;border-radius:13px;padding:12px 14px;margin-top:12px;
+    font-size:13px;font-weight:600;color:var(--muted);line-height:1.55;
+  }
+  .note b{color:var(--ink);}
+
+  .cta{
+    display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:18px;
+    background:var(--blue);color:#fff;border:none;border-radius:14px;padding:16px;
+    font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;text-decoration:none;
+    box-shadow:0 12px 24px -12px rgba(46,85,201,.7);transition:transform .12s,background .15s;
+  }
+  .cta:hover{background:var(--blue-deep);transform:translateY(-1px);}
+  .cta:active{transform:translateY(0);}
+
+  details.more{margin-top:14px;border-top:1px dashed var(--line);padding-top:14px;}
+  details.more summary{
+    list-style:none;cursor:pointer;font-weight:800;font-size:13.5px;color:var(--blue);
+    display:flex;align-items:center;gap:6px;
+  }
+  details.more summary::-webkit-details-marker{display:none;}
+  details.more summary .chev{transition:transform .2s;}
+  details.more[open] summary .chev{transform:rotate(180deg);}
+  .more-list{display:grid;gap:8px;margin-top:12px;}
+  .more-item{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:#FBFCFF;border:1px solid var(--line);border-radius:12px;padding:11px 14px;
+    font-size:13.5px;font-weight:700;color:var(--ink);text-decoration:none;
+  }
+  .more-item:hover{border-color:var(--blue);background:var(--blue-soft);}
+  .more-item .go{color:var(--muted);font-size:12px;font-weight:700;flex:0 0 auto;}
+
+  .restart{
+    display:block;margin:18px auto 0;background:none;border:none;color:var(--muted);
+    font-family:inherit;font-weight:800;font-size:13.5px;cursor:pointer;padding:8px;
+  }
+  .restart:hover{color:var(--ink);}
+
+  .foot{text-align:center;font-size:11.5px;color:#94A0BC;font-weight:600;margin-top:22px;line-height:1.6;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important;transition:none !important;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="mascot" aria-hidden="true">
+      <!-- 북샘이: 친근한 책 캐릭터 (오리지널 SVG) -->
+      <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
+        <rect x="6" y="9" width="40" height="34" rx="7" fill="#2E55C9"/>
+        <rect x="6" y="9" width="40" height="34" rx="7" fill="url(#g)" opacity=".25"/>
+        <path d="M26 12v28" stroke="#1E3DA0" stroke-width="2.4" stroke-linecap="round"/>
+        <rect x="10" y="14" width="13" height="24" rx="3" fill="#fff"/>
+        <rect x="29" y="14" width="13" height="24" rx="3" fill="#EAF0FF"/>
+        <circle cx="17.5" cy="24" r="2.3" fill="#172139"/>
+        <circle cx="34.5" cy="24" r="2.3" fill="#172139"/>
+        <path d="M22 30c2 2.2 6 2.2 8 0" stroke="#FF6B5C" stroke-width="2.2" stroke-linecap="round"/>
+        <rect x="33" y="6" width="6" height="12" rx="2" fill="#FFB020"/>
+        <defs><linearGradient id="g" x1="6" y1="9" x2="46" y2="43"><stop stop-color="#fff"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
+      </svg>
+    </div>
+    <div class="brand">
+      <h1>나에게 딱 맞는 영어책 찾기</h1>
+      <p><b>북샘이</b>가 5걸음 안에 운명의 한 권을 골라드려요 📚</p>
+    </div>
+  </div>
+
+  <div class="tabs" id="tabs" aria-label="진행 단계"></div>
+
+  <div id="stage"></div>
+
+  <p class="foot">YBM 북샘 · 초·중·고 영어 교재 추천<br>* 일부 교재는 데모용 예시이며, 실제 상품 연결이 필요합니다.</p>
+</div>
+
+<script>
+/* =========================================================================
+   1) 카탈로그 (첨부 차트 기반 대표 시리즈)
+   - 칸마다 "대표 1권"을 pick()으로 학년/실력/스타일에 맞춰 결정
+   - more[]: "비슷한 다른 교재 더 보기"
+   - 검증된 4권만 실제 상품 URL 연결, 나머지는 북샘으로 이동(TODO: prdSeq 교체)
+   ========================================================================= */
+
+const BOOKSAM = "https://www.ybmbooksam.com/";
+const detailUrl = (seq) => `https://www.ybmbooksam.com/html/goods/item_details?cateSeq=0&prdSeq=${seq}`;
+
+// 제목 접두사 → 검증된 실제 상품 링크
+const VERIFIED = [
+  { match:"Phonics NOW",                       url:detailUrl("10000001677") },
+  { match:"Benchmark Reading",                 url:detailUrl("10000001318") },
+  { match:"I Love Grammar",                    url:detailUrl("10000001758") },
+  { match:"Reading Booster 영어독해 모의고사", url:detailUrl("10000001793") },
+];
+function linkFor(title){
+  const hit = VERIFIED.find(v => title.startsWith(v.match));
+  return hit ? {url:hit.url, verified:true} : {url:BOOKSAM, verified:false};
+}
+
+const clamp = (n,lo,hi)=>Math.max(lo,Math.min(hi,n));
+// ELT 표(Pre-K~G12)용 학년 환산
+function eltGrade(level,grade){
+  if(level==="초등") return grade<=0 ? 1 : grade;      // 예비초→G1, 1~6→G1~6
+  if(level==="중등") return 6 + clamp(grade,1,3);       // 중1~3→G7~9
+  return 9 + clamp(grade,1,3);                          // 고1~3→G10~12
+}
+
+/* shelves: key = `${track}::${item}` */
+const SHELVES = {
+  /* ---------------- 초등 ---------------- */
+  "초등::파닉스":{persona:"🌱 영어 세상의 첫 탐험가",
+    hook:"파닉스는 영어 읽기의 첫 단추. 소리 규칙만 익히면 처음 보는 단어도 스스로 읽어요.",
+    more:["Phonics Wonder 1~5","Phonics Land 1~6","워드킹 1"],
+    pick:s=>["Phonics NOW 1","Phonics NOW 2","Phonics NOW 3","Phonics NOW 4","Phonics NOW 5"][clamp(s.grade,0,4)] },
+  "초등::어휘":{persona:"💎 말의 정원사",
+    hook:"매일 조금씩 쌓는 단어가 곧 영어 자신감. 그림·예문으로 오래 남게 외워요.",
+    more:["워드킹 1","워드킹 2","첫 그림 영어사전"],
+    pick:s=> s.grade<=0 ? "첫 그림 영어사전" : (s.grade<=3 ? "워드킹 1" : "워드킹 2") },
+  "초등::듣기":{persona:"🎵 영어 소리 수집가",
+    hook:"미국 교실 영어를 그대로. 듣기 귀가 열리면 말하기·독해까지 같이 자라요.",
+    more:["Listening Wonder 1~5","YBM Listening Pie 1~4"],
+    pick:s=> s.grade<=0 ? "미국유치원에서 가장 많이 부르는 영어동요 30"
+            : s.grade<=3 ? "Listening Wonder "+clamp(s.grade,1,5)
+            : "YBM Listening Pie Level "+clamp(s.grade-3,1,4) },
+  "초등::말하기":{persona:"🗣️ 말문의 모험가",
+    hook:"외운 표현을 입으로 꺼내는 연습. 짧은 문장부터 자신 있게 말해요.",
+    more:["YBM Speaking Pie 1~4"],
+    pick:s=>"YBM Speaking Pie Level "+clamp(s.grade-3,1,4),
+    young:s=> s.grade<4 ? "본격 말하기 교재는 4학년부터예요. 우선 가장 쉬운 1권으로 시작!" : null },
+  "초등::쓰기":{persona:"✍️ 문장 마법사",
+    hook:"한 문장부터 한 문단까지. 쓰면서 문법·어휘가 진짜 내 것이 돼요.",
+    more:["YBM Writing Pie 1~4","Writing Star 3rd Ed."],
+    pick:s=> s.grade<=3 ? "Writing Star kids "+clamp(s.grade,1,3)
+            : "Writing Star 3rd Ed. "+clamp(s.grade-3,1,3) },
+  "초등::독해":{persona:"📖 글 속 세계 여행자",
+    hook:"짧은 글부터 차근차근. 읽는 힘이 모든 영어 공부의 바탕이에요.",
+    more:["YBM Reading Pie 1~4","Reading Fair 1~3"],
+    pick:s=> s.grade<=3 ? "Reading Camp "+clamp(s.grade-1,1,3)
+            : "YBM Reading Pie Level "+clamp(s.grade-3,1,4) },
+  "초등::문법":{persona:"🧩 언어의 비밀 탐정",
+    hook:"규칙이 보이면 영어가 쉬워져요. 초등 눈높이 설명으로 기초 문법을 잡아요.",
+    more:["Grammar Wonder 1~3","Grammar Pop / Pop plus","Jr. Time for Grammar"],
+    pick:s=> s.grade<=3 ? "Grammar King "+clamp(s.grade,1,2)
+            : "Grammar Wonder "+clamp(s.grade-3,1,3) },
+  "초등::종합":{persona:"🎢 영어 통합 탐험가",
+    hook:"듣기·읽기·문법을 한 권에. 빠짐없이 균형 있게 가고 싶을 때 딱이에요.",
+    more:["영역별 단행본(파닉스·독해·문법)"],
+    pick:s=>"Roller Coaster "+["A","A","B","C","D","E","F"][clamp(s.grade,0,6)]+"단계" },
+
+  /* ---------------- 중등 ---------------- */
+  "중등::어휘":{persona:"💎 말의 정원사",
+    hook:"내신·서술형의 출발은 어휘. 어원·예문으로 한 번에 오래 외워요.",
+    more:["1등급 중학 영단어","BOOSTER VOCA 어원편"],
+    pick:s=> s.style==="핵심" ? "쓰면서 바로 외우는 중학 영단어 "+(s.grade<=2?"기본편":"완성편")
+            : "BOOSTER VOCA 중등"+["기본","기본","실력","완성"][clamp(s.grade,1,3)] },
+  "중등::듣기":{persona:"🎵 영어 소리 수집가",
+    hook:"중학 듣기평가는 패턴 싸움. 모의고사로 실전 감각을 끌어올려요.",
+    more:["Good Listening 1~3","고득점 중학영어 듣기모의고사 20+2"],
+    pick:s=>"적중 100% 중학 영어듣기 모의고사 20회 LV."+clamp(s.grade,1,3) },
+  "중등::쓰기":{persona:"✏️ 언어의 연금술사",
+    hook:"내신 변별의 핵심, 서술형. 문법을 글쓰기로 연결해 점수로 만들어요.",
+    more:["연타 중학영어 문법+쓰기"],
+    pick:s=>"알리GO을리GO 서술형쓰기 "+clamp(s.grade,1,3) },
+  "중등::독해":{persona:"📖 글 속 세계 여행자",
+    hook:"지문이 길어지는 중등 독해, 끊어 읽기로 정확하게. 내신·수능의 토대예요.",
+    more:["Reading Prime 1~4","알리GO을리GO 독해","Reading Sharp(리딩샵)"],
+    pick:s=> s.style==="실전" ? "Reading Prime "+clamp(s.grade,1,4)
+            : s.style==="핵심" ? "Reading Sharp(리딩샵) Lv."+clamp(s.grade,1,2)
+            : "I Love Reading "+clamp(s.grade,1,3) },
+  "중등::문법":{persona:"🧩 언어의 비밀 탐정",
+    hook:"헷갈리던 문법이 한 권에 착. 쉬운 설명 + 풍부한 문제로 중등 내신 문법을 끝장내요.",
+    more:["YBM 중학 영문법","알리GO을리GO 문법","Time for Grammar","Good Grammar"],
+    pick:s=> s.style==="실전" ? "YBM 중학 영문법 "+clamp(s.grade,1,3)
+            : s.style==="핵심" ? ["Time for Grammar Basic","Time for Grammar Basic","Time for Grammar Intermediate","Time for Grammar Advanced"][clamp(s.grade,1,3)]
+            : "I Love Grammar "+clamp(s.grade,1,3) },
+
+  /* ---------------- 고등 ---------------- */
+  "고등::어휘":{persona:"🎯 어휘 전략가",
+    hook:"수능 어휘는 양보다 회독. 어원으로 묶어 한 번에 효율적으로 외워요.",
+    more:["부스터 보카 고교내신 / 수능","YBM VOCA 어원","빈출어람"],
+    pick:s=> s.ability==="기초" ? "WORD POT 기본편"
+            : s.ability==="심화" ? "WORD POT 수능" : "부스터 보카 고교내신" },
+  "고등::독해":{persona:"🏔️ 독해 원정대장",
+    hook:"기출 유형 그대로. 끊어 읽기와 유형 훈련으로 시간 안에 정확하게 풀어요.",
+    more:["BOOSTER 구문독해 / 유형독해 / 어법어휘(개정)","호락호락 수능영어 독해"],
+    pick:s=> s.ability==="기초" ? "Reading Prime 5"
+            : s.ability==="중간" ? "BOOSTER 유형독해(개정)" : "Reading Sharp(리딩샵) Lv.4" },
+  "고등::문법":{persona:"🔬 문장의 설계자",
+    hook:"수능 어법·구문은 규칙. 핵심 패턴을 잡으면 어떤 지문도 분석돼요.",
+    more:["수직상승 고등영문법 / 빈출구문 / 빈출어법","핵심으로 직진하는 구문비법"],
+    pick:s=> s.ability==="기초" ? "Grammar Sharp 기초"
+            : s.ability==="중간" ? "Grammar Sharp 기본 1~2" : "Grammar Sharp 완성" },
+  "고등::단기특강":{persona:"🔥 막판 역전의 달인",
+    hook:"시험이 코앞일 때 약점만 콕. 유형·빈칸·3점문항을 짧고 굵게 잡아요.",
+    more:["초간단 수능영어 문법편 / 구문편","초간단 수능영어 빈칸추론편 / 3점문항"],
+    pick:s=> s.ability==="기초" ? "초간단 수능영어 유형편 입문"
+            : s.ability==="중간" ? "초간단 수능영어 유형편 기본" : "초간단 수능영어 유형편 실전" },
+  "고등::수능모의고사":{persona:"🏆 실전 승부사",
+    hook:"실전은 실전으로. 모의고사로 시간 배분과 멘탈을 등급으로 연결해요.",
+    more:["NEW LISTENING BOOSTER 영어듣기 모의고사 25 / 40회","Listening Booster 기본 듣기 모의고사 20회"],
+    pick:s=> s.ability==="기초" ? "Reading Booster <기본> 영어독해 모의고사 10+2회"
+            : "Reading Booster 영어독해 모의고사 15회" },
+
+  /* ---------------- ELT (별도 트랙) ---------------- */
+  "ELT::원서":{persona:"🌍 원서 세계 탐험가",
+    hook:"시험 영어 말고 진짜 영어. 단계별 리딩으로 독해력을 차곡차곡, 픽션·논픽션 균형으로 사고력까지.",
+    more:["Reading Street (US School Program)","Reading Camp / Reading Fair","Double Take Reading"],
+    pick:s=>{const g=eltGrade(s.level,s.grade);
+      if(g<=2) return "Reading Village";
+      if(g<=6) return "Benchmark Reading Level "+g+" (Book 1~3)";
+      if(g<=9) return "Global Outlook";
+      return "World of Reading";} },
+  "ELT::통합":{persona:"🧭 영어 종합 탐험가",
+    hook:"읽기·듣기·말하기·쓰기를 한 흐름으로. 해외 교육과정식 통합 학습으로 진짜 실력을 키워요.",
+    more:["New Interactions Reading & Writing","Interaction / Mosaic Listening & Speaking"],
+    pick:s=>{const g=eltGrade(s.level,s.grade);
+      if(g<=6) return "Reading Street (통합 프로그램)";
+      return "ELLevate Reading & Writing";} },
+};
+
+/* fallback: 그 학령에 없는 항목 → 가장 가까운 곳으로 (결정 2) */
+const FALLBACK = {
+  "중등::기초":{ to:"초등::독해",
+    note:"중등용 기초 전용 교재가 없어서, <b>기초를 탄탄히 잡아줄 초등 고학년 독해</b>로 골랐어요. 여기서 자신감을 얻고 중등 교재로 넘어가요!" },
+  "고등::기초":{ to:"중등::독해",
+    note:"고등엔 종합·기초 전용 교재가 없어요. <b>탄탄한 기초가 먼저라</b> 중등 독해로 토대를 다진 뒤 수능 교재로 가는 걸 추천해요." },
+};
+
+/* =========================================================================
+   2) 질문 흐름 (5문항, 학령별 적응형)
+   ========================================================================= */
+const STEPS = ["학령","학년","관심","실력","스타일"];
+
+const Q_GRADE = {
+  "초등":[["예비초",0],["1학년",1],["2학년",2],["3학년",3],["4학년",4],["5학년",5],["6학년",6]],
+  "중등":[["예비중",0],["중1",1],["중2",2],["중3",3]],
+  "고등":[["예비고",0],["고1",1],["고2",2],["고3",3]],
+};
+
+// 관심(=항목/페르소나). 키는 SHELVES의 item, ELT/fallback은 특수 처리
+const Q_ITEM = {
+  "초등":[
+    {emo:"🔤",label:"파닉스부터 제대로 잡고 싶어요",sub:"",item:"파닉스"},
+    {emo:"🐝",label:"어휘를 쑥쑥 늘리고 싶어요",sub:"",item:"어휘"},
+    {emo:"📖",label:"영어 글을 잘 읽고 싶어요",sub:"",item:"독해"},
+    {emo:"🧩",label:"영어 문법을 학습하고 싶어요",sub:"",item:"문법"},
+    {emo:"🎧",label:"영어 듣기를 잘하고 싶어요",sub:"",item:"듣기"},
+    {emo:"✍️",label:"영어로 문장을 써보고 싶어요",sub:"",item:"쓰기"},
+    {emo:"🎢",label:"영어의 모든 영역을 골고루 학습하고 싶어요",sub:"",item:"종합"},
+  ],
+  "중등":[
+    {emo:"🧩",label:"헷갈리는 문법을 끝내고 싶어요",sub:"",item:"문법"},
+    {emo:"📖",label:"긴 지문도 거뜬히 읽고 싶어요",sub:"",item:"독해"},
+    {emo:"🐝",label:"단어를 빠르게 늘리고 싶어요",sub:"",item:"어휘"},
+    {emo:"✍️",label:"서술형 점수를 올리고 싶어요",sub:"",item:"쓰기"},
+    {emo:"🎧",label:"듣기 실력을 올리고 싶어요",sub:"",item:"듣기"},
+    {emo:"🌍",label:"진짜 영어 실력을 키우고 싶어요",sub:"",item:"원서",track:"ELT"},
+    {emo:"🍼",label:"한 단계 아래부터 시작하고 싶어요",sub:"",item:"기초",fallback:"중등::기초"},
+  ],
+  "고등":[
+    {emo:"📖",label:"독해 실력을 확실히 올리고 싶어요",sub:"",item:"독해"},
+    {emo:"🧩",label:"어법·구문을 완벽하게 잡고 싶어요",sub:"",item:"문법"},
+    {emo:"🐝",label:"단어부터 탄탄히 쌓고 싶어요",sub:"",item:"어휘"},
+    {emo:"🏔️",label:"실전으로 등급을 올리고 싶어요",sub:"",item:"수능모의고사"},
+    {emo:"⚡",label:"약점을 빠르게 메우고 싶어요",sub:"",item:"단기특강"},
+    {emo:"🌍",label:"진짜 영어 실력을 키우고 싶어요",sub:"",item:"원서",track:"ELT"},
+    {emo:"🍼",label:"한 단계 아래부터 시작하고 싶어요",sub:"",item:"기초",fallback:"고등::기초"},
+  ],
+};
+
+const Q_ABILITY = [
+  {emo:"🐣",label:"기초부터요",sub:"쉬운 것부터 차근차근",val:"기초"},
+  {emo:"🐤",label:"중간쯤이에요",sub:"실전 감만 더하면 돼요",val:"중간"},
+  {emo:"🦅",label:"심화로 가고 싶어요",sub:"디테일만 채우면 돼요",val:"심화"},
+];
+const Q_STYLE = [
+  {emo:"📕",label:"친절한 설명파",sub:"해설이 빵빵해야 안심돼요",val:"친절"},
+  {emo:"💪",label:"문제 실전파",sub:"문제 많고 빡센 게 좋아요",val:"실전"},
+  {emo:"⚡",label:"핵심 압축파",sub:"얇고 핵심만 빠르게",val:"핵심"},
+];
+
+/* =========================================================================
+   3) 엔진
+   ========================================================================= */
+const state = {step:0, level:null, grade:null, gradeLabel:null, itemChoice:null, ability:null, style:null};
+
+function resolve(){
+  const choice = state.itemChoice;
+  let shelfKey, fallbackNote=null;
+
+  if(choice.fallback){
+    const fb = FALLBACK[choice.fallback];
+    shelfKey = fb.to; fallbackNote = fb.note;
+  } else {
+    const track = choice.track || state.level;   // ELT or 학령
+    shelfKey = `${track}::${choice.item}`;
+  }
+
+  const shelf = SHELVES[shelfKey];
+  const ctx = {level:state.level, grade:state.grade, ability:state.ability, style:state.style};
+  const title = shelf.pick(ctx);
+  const {url, verified} = linkFor(title);
+
+  // 어린 학습자용 추가 안내(있을 때)
+  let young = shelf.young ? shelf.young(ctx) : null;
+
+  return {persona:shelf.persona, hook:shelf.hook, more:shelf.more||[], title, url, verified, fallbackNote, young};
+}
+
+/* =========================================================================
+   4) 렌더링
+   ========================================================================= */
+const stage = document.getElementById("stage");
+const tabsEl = document.getElementById("tabs");
+
+function renderTabs(){
+  tabsEl.innerHTML = STEPS.map((_,i)=>{
+    const cls = i<state.step ? "done" : (i===state.step ? "current" : "");
+    return `<div class="tab ${cls}"></div>`;
+  }).join("");
+}
+
+function optionsHtml(list, render){
+  return `<div class="options">${list.map(render).join("")}</div>`;
+}
+function escapeAttr(s){return String(s).replace(/"/g,"&quot;");}
+
+function renderStep(){
+  renderTabs();
+  let html = "";
+
+  if(state.step===0){
+    html = `
+      <div class="eyebrow">STEP 1 / 5</div>
+      <div class="q">지금 영어 공부하는 사람은?<span class="sub">학년에 맞는 책으로 골라드릴게요</span></div>
+      ${optionsHtml(
+        [["🧒","초등학생이에요","초등"],["🧑‍🎓","중학생이에요","중등"],["🎓","고등학생이에요","고등"]],
+        o=>`<button class="opt" data-level="${o[2]}"><span class="emo">${o[0]}</span><span class="txt">${o[1]}</span></button>`
+      )}
+      <p class="foot" style="margin-top:18px">초등은 학부모님이 아이 대신 골라주셔도 좋아요 🙂</p>`;
+  }
+
+  else if(state.step===1){
+    const g = Q_GRADE[state.level];
+    html = `
+      <div class="eyebrow">STEP 2 / 5</div>
+      <div class="q">정확히 몇 학년이에요?</div>
+      <div class="options grades">
+        ${g.map(x=>`<button class="opt" data-grade="${x[1]}" data-glabel="${escapeAttr(x[0])}">${x[0]}</button>`).join("")}
+      </div>
+      ${backBtn()}`;
+  }
+
+  else if(state.step===2){
+    const items = Q_ITEM[state.level];
+    html = `
+      <div class="eyebrow">STEP 3 / 5</div>
+      <div class="q">이번 책으로 제일 하고 싶은 건?<span class="sub">${state.gradeLabel} · 가장 끌리는 걸 골라요</span></div>
+      ${optionsHtml(items, (o,i)=>
+        `<button class="opt" data-idx="${i}"><span class="emo">${o.emo}</span><span class="txt">${o.label}${o.sub?`<small>${o.sub}</small>`:""}</span></button>`
+      )}
+      ${backBtn()}`;
+  }
+
+  else if(state.step===3){
+    html = `
+      <div class="eyebrow">STEP 4 / 5</div>
+      <div class="q">솔직히 지금 내 실력은?</div>
+      ${optionsHtml(Q_ABILITY, o=>
+        `<button class="opt" data-ability="${o.val}"><span class="emo">${o.emo}</span><span class="txt">${o.label}<small>${o.sub}</small></span></button>`
+      )}
+      ${backBtn()}`;
+  }
+
+  else if(state.step===4){
+    html = `
+      <div class="eyebrow">STEP 5 / 5</div>
+      <div class="q">공부할 때 나는…<span class="sub">마지막! 스타일에 맞춰 딱 맞는 책으로</span></div>
+      ${optionsHtml(Q_STYLE, o=>
+        `<button class="opt" data-style="${o.val}"><span class="emo">${o.emo}</span><span class="txt">${o.label}<small>${o.sub}</small></span></button>`
+      )}
+      ${backBtn()}`;
+  }
+
+  stage.innerHTML = `<div class="card step-card">${html}</div>`;
+  bindStep();
+}
+
+function backBtn(){
+  return `<div class="backrow"><button class="back" id="backBtn">← 이전</button></div>`;
+}
+
+function bindStep(){
+  const back = document.getElementById("backBtn");
+  if(back) back.onclick = ()=>{ state.step--; renderStep(); };
+
+  stage.querySelectorAll("[data-level]").forEach(b=>b.onclick=()=>{
+    state.level=b.dataset.level; state.step=1; renderStep();
+  });
+  stage.querySelectorAll("[data-grade]").forEach(b=>b.onclick=()=>{
+    state.grade=+b.dataset.grade; state.gradeLabel=b.dataset.glabel; state.step=2; renderStep();
+  });
+  stage.querySelectorAll("[data-idx]").forEach(b=>b.onclick=()=>{
+    state.itemChoice = Q_ITEM[state.level][+b.dataset.idx]; state.step=3; renderStep();
+  });
+  stage.querySelectorAll("[data-ability]").forEach(b=>b.onclick=()=>{
+    state.ability=b.dataset.ability; state.step=4; renderStep();
+  });
+  stage.querySelectorAll("[data-style]").forEach(b=>b.onclick=()=>{
+    state.style=b.dataset.style; renderResult();
+  });
+}
+
+function renderResult(){
+  state.step = 5;
+  renderTabs(); // all done
+  tabsEl.querySelectorAll(".tab").forEach(t=>{t.classList.remove("current");t.classList.add("done");});
+
+  const r = resolve();
+
+  const [pEmo, ...pRest] = r.persona.split(' ');
+  const pName = pRest.join(' ');
+
+  const verifiedBadge = r.verified
+    ? `<div class="verified">✓ 북샘에서 바로 만나보기</div>` : "";
+
+  const fallbackNote = r.fallbackNote
+    ? `<div class="note">🧭 ${r.fallbackNote}</div>` : "";
+  const youngNote = r.young
+    ? `<div class="note">🍼 ${r.young}</div>` : "";
+
+  const moreList = r.more.length
+    ? `<details class="more">
+         <summary>비슷한 다른 교재 더 보기 <span class="chev">▾</span></summary>
+         <div class="more-list">
+           ${r.more.map(m=>`<a class="more-item" href="${BOOKSAM}" target="_blank" rel="noopener"><span>${m}</span><span class="go">북샘에서 보기 →</span></a>`).join("")}
+         </div>
+       </details>`
+    : "";
+
+  stage.innerHTML = `
+    <div class="card result">
+      <div class="persona">
+        <span class="p-emo">${pEmo}</span>
+        <span class="p-name">${pName}</span>
+        <span class="p-tag">${state.gradeLabel} 맞춤 추천</span>
+      </div>
+      <h2>당신에게 딱 맞는 한 권은</h2>
+      <div class="book">
+        <div class="title">${r.title}</div>
+        <div class="why">${r.hook}</div>
+        ${verifiedBadge}
+      </div>
+      <div class="hook"><span class="pin">📌</span><span>${ybmHook(r)}</span></div>
+      ${fallbackNote}${youngNote}
+      <a class="cta" href="${r.url}" target="_blank" rel="noopener">📚 북샘에서 보러 가기</a>
+      ${moreList}
+      <button class="restart" id="restart">처음부터 다시 하기 ↻</button>
+    </div>`;
+
+  document.getElementById("restart").onclick = ()=>{
+    Object.assign(state,{step:0,level:null,grade:null,gradeLabel:null,itemChoice:null,ability:null,style:null});
+    renderStep();
+  };
+}
+
+// YBM 강점 홍보 훅(결과 종류에 맞춰)
+function ybmHook(r){
+  if(r.title.startsWith("Benchmark")||r.title.startsWith("Reading Village")||r.title.startsWith("Global"))
+    return "YBM ELT — 미국 현지 교과 기반 리딩으로 <b>진짜 읽는 힘</b>을 키워요.";
+  if(r.title.startsWith("Phonics"))
+    return "수많은 교실이 선택한 YBM 파닉스. <b>평생 가는 영어 읽기 습관</b>의 시작.";
+  if(r.title.includes("수능")||r.title.includes("Booster")||r.title.includes("BOOSTER"))
+    return "기출·모평 유형 그대로. YBM 수능 시리즈로 <b>등급을 끌어올려요</b>.";
+  return "교과서를 만드는 YBM이 직접 펴낸 교재. <b>설명도, 문제도 믿고 보는</b> 한 권.";
+}
+
+renderStep();
+</script>
+</body>
+</html>
