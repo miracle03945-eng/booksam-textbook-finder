@@ -599,10 +599,16 @@ function renderResult(){
       </div>
       <div class="hook"><span class="pin">📌</span><span>${ybmHook(r)}</span></div>
       ${fallbackNote}${youngNote}
-      <a class="cta" href="${r.url}" target="_blank" rel="noopener">📚 북샘에서 보러 가기</a>
+      <a class="cta" id="ctaBtn" href="${r.url}" target="_blank" rel="noopener">📚 교재 보러 가기</a>
       ${moreList}
       <button class="restart" id="restart">처음부터 다시 하기 ↻</button>
     </div>`;
+
+  document.getElementById("ctaBtn").onclick = (e)=>{
+    e.preventDefault();
+    alert("교재 상세 화면으로 연결됩니다");
+    window.open(r.url, "_blank", "noopener");
+  };
 
   document.getElementById("restart").onclick = ()=>{
     Object.assign(state,{step:0,level:null,grade:null,gradeLabel:null,itemChoice:null,ability:null,style:null});
