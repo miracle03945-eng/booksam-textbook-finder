@@ -294,12 +294,12 @@ const SHELVES = {
     pick:s=>"Roller Coaster "+["A","A","B","C","D","E","F"][clamp(s.grade,0,6)]+"단계" },
 
   /* ---------------- 중등 ---------------- */
-  "중등::어휘":{persona:"💎 말의 정원사",
+  "중등::어휘":{persona:"🐝 단어 사냥꾼",
     hook:"내신·서술형의 출발은 어휘. 어원·예문으로 한 번에 오래 외워요.",
     more:["1등급 중학 영단어","BOOSTER VOCA 어원편"],
     pick:s=> s.style==="핵심" ? "쓰면서 바로 외우는 중학 영단어 "+(s.grade<=2?"기본편":"완성편")
             : "BOOSTER VOCA 중등"+["기본","기본","실력","완성"][clamp(s.grade,1,3)] },
-  "중등::듣기":{persona:"🎵 영어 소리 수집가",
+  "중등::듣기":{persona:"🎧 소리 해독가",
     hook:"중학 듣기평가는 패턴 싸움. 모의고사로 실전 감각을 끌어올려요.",
     more:["Good Listening 1~3","고득점 중학영어 듣기모의고사 20+2"],
     pick:s=>"적중 100% 중학 영어듣기 모의고사 20회 LV."+clamp(s.grade,1,3) },
@@ -307,13 +307,13 @@ const SHELVES = {
     hook:"내신 변별의 핵심, 서술형. 문법을 글쓰기로 연결해 점수로 만들어요.",
     more:["연타 중학영어 문법+쓰기"],
     pick:s=>"알리GO을리GO 서술형쓰기 "+clamp(s.grade,1,3) },
-  "중등::독해":{persona:"📖 글 속 세계 여행자",
+  "중등::독해":{persona:"🧭 지문 항해사",
     hook:"지문이 길어지는 중등 독해, 끊어 읽기로 정확하게. 내신·수능의 토대예요.",
     more:["Reading Prime 1~4","알리GO을리GO 독해","Reading Sharp(리딩샵)"],
     pick:s=> s.style==="실전" ? "Reading Prime "+clamp(s.grade,1,4)
             : s.style==="핵심" ? "Reading Sharp(리딩샵) Lv."+clamp(s.grade,1,2)
             : "I Love Reading "+clamp(s.grade,1,3) },
-  "중등::문법":{persona:"🧩 언어의 비밀 탐정",
+  "중등::문법":{persona:"⚙️ 문장 해부학자",
     hook:"헷갈리던 문법이 한 권에 착. 쉬운 설명 + 풍부한 문제로 중등 내신 문법을 끝장내요.",
     more:["YBM 중학 영문법","알리GO을리GO 문법","Time for Grammar","Good Grammar"],
     pick:s=> s.style==="실전" ? "YBM 중학 영문법 "+clamp(s.grade,1,3)
@@ -597,7 +597,7 @@ function renderResult(){
         <div class="why">${r.hook}</div>
         ${verifiedBadge}
       </div>
-      <div class="hook"><span class="pin">📌</span><span>${ybmHook(r)}</span></div>
+      ${ybmHook(r) ? `<div class="hook"><span class="pin">📌</span><span>${ybmHook(r)}</span></div>` : ""}
       ${fallbackNote}${youngNote}
       <a class="cta" id="ctaBtn" href="${r.url}" target="_blank" rel="noopener">📚 교재 보러 가기</a>
       ${moreList}
@@ -624,7 +624,7 @@ function ybmHook(r){
     return "수많은 교실이 선택한 YBM 파닉스. <b>평생 가는 영어 읽기 습관</b>의 시작.";
   if(r.title.includes("수능")||r.title.includes("Booster")||r.title.includes("BOOSTER"))
     return "기출·모평 유형 그대로. YBM 수능 시리즈로 <b>등급을 끌어올려요</b>.";
-  return "교과서를 만드는 YBM이 직접 펴낸 교재. <b>설명도, 문제도 믿고 보는</b> 한 권.";
+  return "";
 }
 
 renderStep();
